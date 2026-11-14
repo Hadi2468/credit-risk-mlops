@@ -1,3 +1,5 @@
 __pycache__/
 *.db
 mlruns/
+data/raw/
+data/features/
