@@ -8,28 +8,23 @@ client = TestClient(app)
 
 def test_health():
     response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+
+def test_predict_known_user():
+    response = client.post("/predict", json={"user_id": 2})
     body = response.json()
     assert response.status_code == 200
-    assert isinstance(body, dict), "Error: it is not a dictionary"
-    assert body == {"status": "ok"}
+    assert 0 <= body["default_probability"] <= 1, "probability must be between 0 and 1"
+    assert "model_version" in body
 
-json_data = {"user_id": "sara", "avg_payment_delay": 9}
 
-def test_predict():
-    response = client.post("/predict", json=json_data)
-    body = response.json()
-    assert response.status_code == 200
-    assert isinstance(body, dict), "Error: we need dictionary format"
-    assert body == {"user_id": "sara", "default_probability": 0.45}
+def test_predict_unknown_user():
+    response = client.post("/predict", json={"user_id": 99999})
+    assert response.status_code == 404
 
-negative_json_data = {"user_id": "sara", "avg_payment_delay": -9}
 
-def test_predict_negative_delay():
-    response = client.post("/predict", json=negative_json_data)
-    assert response.status_code == 422
-    assert "detail" in response.json()
-
-missing_json_data = {"avg_payment_delay": 9}
-def test_predict_missing_field():
-    response = client.post("/predict", json=missing_json_data)
+def test_predict_invalid_user_id():
+    response = client.post("/predict", json={"user_id": 0})
     assert response.status_code == 422
