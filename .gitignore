@@ -1,8 +1,8 @@
 __pycache__/
 *.db
 mlruns/
-data/raw/
-data/features/
+data/*
+!data/generate_data.py
 *.ipynb
 !notebooks/demo.ipynb
 .pytest_cache/
