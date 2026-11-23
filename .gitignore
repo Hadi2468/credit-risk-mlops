@@ -3,3 +3,7 @@ __pycache__/
 mlruns/
 data/raw/
 data/features/
+*.ipynb
+!notebooks/demo.ipynb
+.pytest_cache/
+mlartifacts/
